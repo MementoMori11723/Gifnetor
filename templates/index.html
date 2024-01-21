@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
     <h1>Hello world!</h1>
-    <a href="/about">about</a>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="video" accept="mp4/mov">
+        <input type="submit" value="upload">
+    </form>
 {% endblock %}
