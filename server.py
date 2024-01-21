@@ -1,0 +1,4 @@
+from frozen import Freezer
+from app import app
+freezer = Freezer(app)
+freezer.freeze()
