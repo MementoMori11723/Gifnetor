@@ -1,3 +1,24 @@
+# GIFNETOR
+
+A gif creation appliction that takes input as a video files like mp4, mov, mvk and converts it into a gif image.
+
+"How is it possiable ?", you ask.
+
+By opening the video file and reading all the frames inside the file, then convering those high level color images to low level color images (since gif uses low level images) and then writing those images into a gif file, these files are stored in uploads folder.
+
+And there you go, you have successfully converted a video to an image/gif.
+
+> Note : The converted image will larger then the video file. Since gif files have limited colors compared to a video.
+
+## Requirments
+
+1. opencv-python
+2. streamlit
+3. pillow
+
+## Code
+
+```python
 from PIL import Image
 import streamlit as st
 import cv2
@@ -25,7 +46,7 @@ def main():
             st.warning(f"Files were removed")
         else:
             st.info(f"No Files were removed")
-            
+          
 def convert(filepath):
     cap = cv2.VideoCapture(filepath)
     frames = []
@@ -45,3 +66,14 @@ def convert(filepath):
 
 if __name__ == "__main__":
     main()
+```
+
+to Run this locally `streamlit Run app.py`
+
+## Output
+
+output 1
+![output 1](images/Output-1.webp)
+
+output 2
+![output 2](images/Output-2.webp)

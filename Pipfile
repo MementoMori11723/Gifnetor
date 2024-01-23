@@ -4,9 +4,9 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-streamlit = "*"
-opencv-python = "*"
-pillow = "*"
+opencv-python = "==4.9.0.80"
+streamlit = "==1.30.0"
+pillow = "==10.2.0"
 
 [dev-packages]
 
