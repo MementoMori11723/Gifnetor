@@ -1,32 +1,9 @@
-from flask import Flask,render_template,request,redirect
-import ffmpeg
-import os
+from PIL import Image
+import streamlit as st
+import cv2
 
-app = Flask(__name__)
+def main():
+    pass
 
-def fetch(filename):
-    path = os.path.join('uploads/',filename)
-    convert(path,os.path.join('uploads/','output.gif'))
-    print("Complete")
-
-
-def convert(filename,output):
-    stream = ffmpeg.input(filename)
-    stream = ffmpeg.output(stream,output)
-    ffmpeg.run(stream)
-    return
-
-@app.route("/")
-def index():
-    return render_template("index.html")
-
-@app.route("/about/")
-def about():
-    return render_template("about.html")
-
-@app.route("/upload/",methods=['POST'])
-def upload():
-    file = request.files['video']
-    file.save(os.path.join('uploads/',file.filename)) if file else None
-    fetch(file.filename)
-    return redirect("/")
+def convert(filepath):
+    return None
