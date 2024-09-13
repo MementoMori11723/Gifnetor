@@ -1,69 +1,33 @@
-# Stage 1: Build Stage with python:3.10-alpine for a smaller footprint
-FROM python:3.10-alpine AS builder
+# Use the official Go base image for building the app
+FROM golang:1.20-alpine AS builder
 
-# Set environment variables to avoid Python output buffering
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
-# Install build dependencies and required libraries
-RUN apk add --no-cache \
-    build-base \
-    gcc \
-    libc-dev \
-    libjpeg-turbo-dev \
-    zlib-dev \
-    python3-dev \
-    musl-dev \
-    bash \
-    jpeg-dev \
-    freetype-dev \
-    pkgconfig \
-    py3-pip \
-    py3-setuptools \
-    py3-wheel \
-    openblas-dev
-
-# Set the working directory in the container
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copy requirements file and install dependencies
-COPY requirements.txt .
+# Copy the Go app into the working directory
+COPY app.go .
 
-# Install Python dependencies without caching to reduce the final image size
-RUN pip install --no-cache-dir --user -r requirements.txt
+# Build the Go app with optimizations for a small binary
+RUN go build -ldflags="-s -w" -o app app.go
 
-# Stage 2: Final Stage - Use a minimal Alpine image for runtime
-FROM python:3.10-alpine
+# Create a new, smaller image for running the app
+FROM alpine:latest
 
-# Install runtime dependencies only
-RUN apk add --no-cache \
-    libjpeg-turbo \
-    zlib \
-    libstdc++ \
-    jpeg-dev \
-    bash \
-    openblas
+# Install required dependencies: ffmpeg and ca-certificates
+RUN apk --no-cache add ca-certificates ffmpeg
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
-# Set the working directory in the container
+# Set working directory inside the container
 WORKDIR /app
 
-# Copy installed dependencies from the builder stage
-COPY --from=builder /root/.local /root/.local
+# Copy the binary from the builder stage
+COPY --from=builder /app/app .
 
-# Ensure the Python scripts in the user folder are in the PATH
-ENV PATH=/root/.local/bin:$PATH
+# Create necessary directories
+RUN mkdir -p ./uploads ./gifs
 
-# Copy the application code
-COPY . .
+# Expose the port the app runs on
+EXPOSE 8080
 
-# Expose port for streamlit
-EXPOSE 8501
-
-# Run the app
-CMD ["streamlit", "run", "app.py"]
-
+# Command to run the Go app
+CMD ["./app"]
 
